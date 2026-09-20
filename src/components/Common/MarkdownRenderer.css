@@ -2,6 +2,8 @@
   font-size: var(--font-size-md);
   line-height: var(--line-height-relaxed);
   color: var(--color-text-primary);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .markdown-renderer p {
@@ -36,43 +38,6 @@
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: 0.9em;
   color: var(--color-primary);
-}
-
-/* Code block */
-.markdown-renderer .code-block {
-  margin: var(--spacing-md) 0;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: #1e1e1e;
-}
-
-.markdown-renderer .code-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: #2d2d2d;
-  border-bottom: 1px solid #3d3d3d;
-}
-
-.markdown-renderer .code-language {
-  font-size: var(--font-size-xs);
-  color: #888;
-  text-transform: uppercase;
-  font-weight: var(--font-weight-medium);
-}
-
-.markdown-renderer .code-block pre {
-  margin: 0;
-  padding: var(--spacing-md);
-  overflow-x: auto;
-  background: transparent;
-}
-
-.markdown-renderer .code-block code {
-  font-family: 'Fira Code', 'Consolas', monospace;
-  font-size: var(--font-size-sm);
-  line-height: 1.6;
 }
 
 /* Links */
@@ -116,10 +81,12 @@
   color: var(--color-text-secondary);
 }
 
-/* Table */
+/* Table：超出宽度时横向滚动，不挤压其他内容 */
 .markdown-renderer .table-wrapper {
   margin: var(--spacing-md) 0;
+  max-width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .markdown-renderer table {
@@ -141,6 +108,35 @@
 }
 
 .markdown-renderer tr:nth-child(even) {
+  background: var(--color-bg-tertiary);
+}
+
+/* 表头行吸顶：长表格纵向滚动时表头不丢失 */
+.markdown-renderer thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-bg-tertiary);
+}
+
+/* 首列吸左：横向拖动到最右边时行表头不丢失 */
+.markdown-renderer th:first-child,
+.markdown-renderer td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-bg-secondary);
+  box-shadow: 1px 0 0 0 var(--color-border);
+}
+
+/* 与斑马纹保持一致的不透明背景，避免滚动时内容透出 */
+.markdown-renderer tr:nth-child(even) td:first-child {
+  background: var(--color-bg-tertiary);
+}
+
+/* 表头行与首列交叉处保持最上层 */
+.markdown-renderer thead th:first-child {
+  z-index: 3;
   background: var(--color-bg-tertiary);
 }
 

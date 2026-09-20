@@ -30,6 +30,9 @@
   border-radius: var(--radius-lg);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  /* 作为 flex 子项允许收缩，宽表格/代码块在窄屏下不撑破气泡 */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .message-item.user .message-bubble {
@@ -65,6 +68,8 @@
 
 .message-content {
   line-height: var(--line-height-relaxed);
+  max-width: 100%;
+  min-width: 0;
 }
 
 .message-content p {
@@ -117,6 +122,50 @@
 }
 
 .message-item:hover .message-actions {
+  opacity: 1;
+}
+
+/* 收起状态：只保留标题摘要 */
+.message-collapsed-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  padding: var(--spacing-xs) 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.message-collapsed-summary .collapsed-icon {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  transition: transform var(--transition-fast);
+}
+
+.message-collapsed-summary:hover .collapsed-icon {
+  transform: translateX(2px);
+}
+
+.message-collapsed-summary .collapsed-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--font-weight-semibold);
+}
+
+.message-collapsed-summary .collapsed-hint {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* 收起时常驻显示操作按钮，便于恢复展开 */
+.message-item.collapsed .message-actions {
   opacity: 1;
 }
 
