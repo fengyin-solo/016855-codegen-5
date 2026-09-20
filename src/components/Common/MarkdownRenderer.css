@@ -2,6 +2,9 @@
   font-size: var(--font-size-md);
   line-height: var(--line-height-relaxed);
   color: var(--color-text-primary);
+  /* 窄屏下允许收缩，为内部横向滚动容器提供宽度约束 */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .markdown-renderer p {
@@ -40,7 +43,12 @@
 
 /* Code block */
 .markdown-renderer .code-block {
+  /* 行高与预览行数供 max-height 计算使用，保证行号与代码逐行对齐 */
+  --code-line-height: 1.6;
+  --code-preview-lines: 8;
+
   margin: var(--spacing-md) 0;
+  max-width: 100%;
   border-radius: var(--radius-md);
   overflow: hidden;
   background: #1e1e1e;
@@ -48,11 +56,16 @@
 
 .markdown-renderer .code-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md);
   background: #2d2d2d;
   border-bottom: 1px solid #3d3d3d;
+}
+
+/* 收起为标题时只留头部一栏 */
+.markdown-renderer .code-block.view-collapsed .code-header {
+  border-bottom: none;
 }
 
 .markdown-renderer .code-language {
@@ -60,19 +73,118 @@
   color: #888;
   text-transform: uppercase;
   font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
-.markdown-renderer .code-block pre {
+.markdown-renderer .code-meta {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  color: #666;
+  white-space: nowrap;
+}
+
+.markdown-renderer .code-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* 代码主体：唯一的滚动容器，行号与代码一起纵向滚动 */
+.markdown-renderer .code-body {
+  position: relative;
+  overflow-x: auto;
+  overflow-y: hidden;
+  font-size: var(--font-size-sm);
+  line-height: var(--code-line-height);
+}
+
+/* 预览模式：只露出前几行，高度按行高精确计算 */
+.markdown-renderer .code-body.is-preview {
+  max-height: calc(
+    var(--code-preview-lines) * var(--code-line-height) * 1em
+    + 2 * var(--spacing-md)
+  );
+  overflow: hidden;
+}
+
+.markdown-renderer .code-scroll {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+}
+
+/* 行号列：横向滚动时吸附在左侧，不随代码滚走 */
+.markdown-renderer .code-gutter {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: var(--spacing-md) var(--spacing-sm);
+  background: #1e1e1e;
+  border-right: 1px solid #3d3d3d;
+  color: #6e7681;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: var(--font-size-sm);
+  line-height: var(--code-line-height);
+  text-align: right;
+  user-select: none;
+}
+
+.markdown-renderer .code-gutter span {
+  display: block;
+}
+
+.markdown-renderer .code-pre {
+  flex: 1;
+  min-width: 0;
   margin: 0;
   padding: var(--spacing-md);
-  overflow-x: auto;
+  overflow: visible;
   background: transparent;
 }
 
 .markdown-renderer .code-block code {
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: var(--font-size-sm);
-  line-height: 1.6;
+  line-height: var(--code-line-height);
+}
+
+/* 预览模式底部的渐隐遮罩 */
+.markdown-renderer .code-fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 48px;
+  background: linear-gradient(transparent, #1e1e1e);
+  pointer-events: none;
+}
+
+/* 展开全部 / 收起 底栏 */
+.markdown-renderer .code-expand-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: none;
+  border-top: 1px solid #3d3d3d;
+  background: #2d2d2d;
+  color: #888;
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.markdown-renderer .code-expand-bar:hover {
+  background: #333333;
+  color: #cccccc;
 }
 
 /* Links */
@@ -120,6 +232,44 @@
 .markdown-renderer .table-wrapper {
   margin: var(--spacing-md) 0;
   overflow-x: auto;
+  max-width: 100%;
+}
+
+/* 长表格：带标题栏的可收起容器 */
+.markdown-renderer .table-block {
+  margin: var(--spacing-md) 0;
+  max-width: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.markdown-renderer .table-block .table-wrapper {
+  margin: 0;
+}
+
+.markdown-renderer .table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm) var(--spacing-xs) var(--spacing-md);
+  background: var(--color-bg-tertiary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* 收起为标题时只留头部一栏 */
+.markdown-renderer .table-block.view-collapsed .table-header {
+  border-bottom: none;
+}
+
+.markdown-renderer .table-title {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .markdown-renderer table {
@@ -138,6 +288,14 @@
 .markdown-renderer th {
   background: var(--color-bg-tertiary);
   font-weight: var(--font-weight-semibold);
+}
+
+/* 表头吸附：纵向滚动时表头不丢，横向滚动时与列一起移动保持对齐 */
+.markdown-renderer thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-bg-tertiary);
 }
 
 .markdown-renderer tr:nth-child(even) {

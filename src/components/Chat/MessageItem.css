@@ -30,6 +30,9 @@
   border-radius: var(--radius-lg);
   word-wrap: break-word;
   overflow-wrap: break-word;
+  /* 窄屏下允许收缩，内部表格 / 代码块各自横向滚动 */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .message-item.user .message-bubble {
@@ -65,6 +68,8 @@
 
 .message-content {
   line-height: var(--line-height-relaxed);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .message-content p {

@@ -46,7 +46,11 @@ export const MessageItem = memo(function MessageItem({
               {isUser ? (
                 <p>{message.content}</p>
               ) : (
-                <MarkdownRenderer content={message.content} />
+                <MarkdownRenderer
+                  content={message.content}
+                  messageId={message.id}
+                  isStreaming={isStreaming}
+                />
               )}
             </div>
           )}
